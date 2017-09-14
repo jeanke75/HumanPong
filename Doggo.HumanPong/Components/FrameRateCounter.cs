@@ -6,19 +6,24 @@ namespace Doggo.HumanPong.Components
 {
     public class FrameRateCounter : DrawableGameComponent
     {
+        #region Field Region
         protected Pong GameRef;
         SpriteFont spriteFont;
 
         int frameRate = 0;
         int frameCounter = 0;
         TimeSpan elapsedTime = TimeSpan.Zero;
+        #endregion
 
+        #region Constructor Region
         public FrameRateCounter(Game game) : base(game)
         {
             GameRef = (Pong)game;
             DrawOrder = int.MaxValue; //always on top
         }
+        #endregion
 
+        #region Method Region
         protected override void LoadContent()
         {
             spriteFont = GameRef.Content.Load<SpriteFont>(@"Fonts\FrameRateFont");
@@ -47,12 +52,13 @@ namespace Doggo.HumanPong.Components
 
             string fps = string.Format("fps: {0}", frameRate);
 
-            GameRef.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, GameRef.ScaleMatrix);
+            GameRef.SpriteBatch.Begin();
 
             GameRef.SpriteBatch.DrawString(spriteFont, fps, new Vector2(10, 10), Color.Black);
             GameRef.SpriteBatch.DrawString(spriteFont, fps, new Vector2(11, 11), Color.White);
 
             GameRef.SpriteBatch.End();
         }
+        #endregion
     }
 }
