@@ -17,6 +17,9 @@ namespace Doggo.HumanPong
         public const int TargetWidth = 1280; //1920
         public const int TargetHeight = 720; //1080
         Matrix scaleMatrix;
+
+        Paddle Player1;
+        Paddle Player2;
         #endregion
 
         #region Property Region
@@ -36,6 +39,7 @@ namespace Doggo.HumanPong
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            //graphics.IsFullScreen = true; 
             graphics.SynchronizeWithVerticalRetrace = false; //vsync
             //graphics.PreferredBackBufferFormat = SurfaceFormat.Alpha8;
             IsFixedTimeStep = false;
@@ -64,10 +68,26 @@ namespace Doggo.HumanPong
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // create a solid color texture (without a png file), can be replaced by a premade image file using Content.Load<Texture2D>("contentFolderStructure\fileNameWithoutExtension")
+            int paddleWidth = 5;
+            int paddleHeight = 100;
+
+            Texture2D paddleTexture = new Texture2D(GraphicsDevice, paddleWidth, paddleHeight);
+            Color[] paddleTextureData = new Color[paddleTexture.Width * paddleTexture.Height];
+            for (int i = 0; i < paddleTextureData.Length; ++i)
+                paddleTextureData[i] = Color.Red;
+            paddleTexture.SetData(paddleTextureData);
+            
+            // distance from the side of the screen
+            float offset = TargetWidth * 0.01f;
+
+            Vector2 positionP1 = new Vector2(offset - (paddleTexture.Width / 2), (TargetHeight - paddleTexture.Height) / 2);
+            Player1 = new Paddle(this, paddleTexture, positionP1);
+
+            Vector2 positionP2 = new Vector2((TargetWidth - offset) - (paddleTexture.Width / 2), (TargetHeight - paddleTexture.Height) / 2);
+            Player2 = new Paddle(this, paddleTexture, positionP2);
         }
 
         /// <summary>
@@ -100,9 +120,13 @@ namespace Doggo.HumanPong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            // the scaling will have a bug when in 4:3 fullscreen it won't display the pads in the correct position
+            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, scaleMatrix);
+            Player1.Draw(spriteBatch);
+            Player2.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
