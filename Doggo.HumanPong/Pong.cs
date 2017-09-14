@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Doggo.HumanPong.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -9,12 +10,26 @@ namespace Doggo.HumanPong
     /// </summary>
     public class Pong : Game
     {
+        #region Field Region
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         public const int TargetWidth = 1280; //1920
         public const int TargetHeight = 720; //1080
         Matrix scaleMatrix;
+        #endregion
+
+        #region Property Region
+        public SpriteBatch SpriteBatch
+        {
+            get { return spriteBatch; }
+        }
+
+        public Matrix ScaleMatrix
+        {
+            get { return scaleMatrix; }
+        }
+        #endregion
 
         public Pong()
         {
@@ -39,8 +54,7 @@ namespace Doggo.HumanPong
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            Components.Add(new FrameRateCounter(this));
             base.Initialize();
         }
 
