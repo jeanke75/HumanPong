@@ -11,11 +11,24 @@ namespace Doggo.HumanPong
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        
+
+        public const int TargetWidth = 1280; //1920
+        public const int TargetHeight = 720; //1080
+        Matrix scaleMatrix;
+
         public Pong()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            graphics.SynchronizeWithVerticalRetrace = false; //vsync
+            //graphics.PreferredBackBufferFormat = SurfaceFormat.Alpha8;
+            IsFixedTimeStep = false;
+            if (IsFixedTimeStep)
+                TargetElapsedTime = System.TimeSpan.FromMilliseconds(1000.0f / 60);
+
+            SetWindowResolution();
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -73,11 +86,23 @@ namespace Doggo.HumanPong
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        public void SetWindowResolution(int windowWidth = TargetWidth, int windowHeight = TargetHeight)
+        {
+            graphics.PreferredBackBufferWidth = windowWidth;
+            graphics.PreferredBackBufferHeight = windowHeight;
+            graphics.ApplyChanges();
+
+            float scaleWidth = graphics.GraphicsDevice.Viewport.Width / (float)TargetWidth;
+            float scaleHeight = graphics.GraphicsDevice.Viewport.Height / (float)TargetHeight;
+
+            scaleMatrix = Matrix.CreateScale(scaleWidth, scaleHeight, 1);
         }
     }
 }
