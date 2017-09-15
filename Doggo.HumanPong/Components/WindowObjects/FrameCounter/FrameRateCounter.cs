@@ -1,8 +1,9 @@
 ﻿using System;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Doggo.HumanPong.Components
+namespace Doggo.HumanPong.Components.WindowObjects.FrameCounter
 {
     public class FrameRateCounter : DrawableGameComponent
     {
@@ -50,12 +51,10 @@ namespace Doggo.HumanPong.Components
         {
             frameCounter++;
 
-            string fps = string.Format("fps: {0}", frameRate);
-
             GameRef.SpriteBatch.Begin();
 
-            GameRef.SpriteBatch.DrawString(spriteFont, fps, new Vector2(10, 10), Color.Black);
-            GameRef.SpriteBatch.DrawString(spriteFont, fps, new Vector2(11, 11), Color.White);
+            GameRef.SpriteBatch.DrawString(spriteFont, string.Format("fps: {0}", frameRate), new Vector2(11, 11), Color.Black);
+            GameRef.SpriteBatch.DrawString(spriteFont, string.Format("fps: {0}", frameRate), new Vector2(10, 10), Color.White);
 
             GameRef.SpriteBatch.End();
         }

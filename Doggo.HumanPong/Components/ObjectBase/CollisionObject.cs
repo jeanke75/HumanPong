@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Doggo.HumanPong.Components
+namespace Doggo.HumanPong.Components.ObjectBase
 {
     public class CollisionObject
     {

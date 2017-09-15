@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Doggo.HumanPong.Components
+using Doggo.HumanPong.Components.ObjectBase;
+
+namespace Doggo.HumanPong.Components.WindowObjects.Paddle
 {
     public class Paddle : CollisionObject
     {

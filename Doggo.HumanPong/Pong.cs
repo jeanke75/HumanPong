@@ -1,7 +1,9 @@
-﻿using Doggo.HumanPong.Components;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
+
+using Doggo.HumanPong.Components.WindowObjects.Paddle;
+using Doggo.HumanPong.Components.WindowObjects.FrameCounter;
 
 namespace Doggo.HumanPong
 {
