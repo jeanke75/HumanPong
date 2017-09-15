@@ -75,6 +75,7 @@ namespace Doggo.HumanPong
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            /*
             // create a solid color texture (without a png file), can be replaced by a premade image file using Content.Load<Texture2D>("contentFolderStructure\fileNameWithoutExtension")
             int paddleWidth = 5;
             int paddleHeight = 100;
@@ -83,8 +84,10 @@ namespace Doggo.HumanPong
             Color[] paddleTextureData = new Color[paddleTexture.Width * paddleTexture.Height];
             for (int i = 0; i < paddleTextureData.Length; ++i)
                 paddleTextureData[i] = Color.Red;
-            paddleTexture.SetData(paddleTextureData);
-            
+            paddleTexture.SetData(paddleTextureData);*/
+
+            Texture2D paddleTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Paddle");
+
             // distance from the side of the screen
             float distanceToEdge = TargetWidth * 0.01f;
             float centerOfPaddle = paddleTexture.Width / 2f;
