@@ -89,12 +89,11 @@ namespace Doggo.HumanPong
             float distanceToEdge = TargetWidth * 0.01f;
             float centerOfPaddle = paddleTexture.Width / 2f;
             float y = (TargetHeight - paddleTexture.Height) / 2f;
-            float x = distanceToEdge - centerOfPaddle;
 
-            Vector2 positionP1 = new Vector2(x, y);
+            Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
             Player1 = new Paddle(this, paddleTexture, positionP1);
 
-            Vector2 positionP2 = new Vector2(TargetWidth - x, y);
+            Vector2 positionP2 = new Vector2(TargetWidth - distanceToEdge - centerOfPaddle, y);
             Player2 = new Paddle(this, paddleTexture, positionP2);
         }
 
