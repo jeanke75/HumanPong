@@ -19,6 +19,7 @@ namespace Doggo.HumanPong.Components.WindowObjects.Paddle
         public Paddle(Game game, Texture2D texture, Vector2 position) : base(texture, position)
         {
             GameRef = game as Pong;
+            Velocity = new Vector2(0, 100);
         }
         #endregion
 

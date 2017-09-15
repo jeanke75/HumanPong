@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\ObjectBase\CollisionObject.cs" />
+    <Compile Include="Components\Utility\Xin.cs" />
     <Compile Include="Components\WindowObjects\FrameCounter\FrameRateCounter.cs" />
     <Compile Include="Components\WindowObjects\Paddle\Paddle.cs" />
     <Compile Include="Pong.cs" />

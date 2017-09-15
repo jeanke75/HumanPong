@@ -4,6 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 using Doggo.HumanPong.Components.WindowObjects.Paddle;
 using Doggo.HumanPong.Components.WindowObjects.FrameCounter;
+using Doggo.HumanPong.Components.Utility;
+using System;
+using System.Diagnostics;
 
 namespace Doggo.HumanPong
 {
@@ -22,6 +25,8 @@ namespace Doggo.HumanPong
 
         Paddle Player1;
         Paddle Player2;
+
+        Stopwatch sw = new Stopwatch();
         #endregion
 
         #region Property Region
@@ -63,6 +68,7 @@ namespace Doggo.HumanPong
         /// </summary>
         protected override void Initialize()
         {
+            Components.Add(new Xin(this));
             Components.Add(new FrameRateCounter(this));
             base.Initialize();
         }
@@ -98,6 +104,8 @@ namespace Doggo.HumanPong
 
             Vector2 positionP2 = new Vector2(TargetWidth - distanceToEdge - centerOfPaddle, y);
             Player2 = new Paddle(this, paddleTexture, positionP2);
+
+            sw.Start();
         }
 
         /// <summary>
@@ -119,8 +127,21 @@ namespace Doggo.HumanPong
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            //used to calculate movement according to time passed, so that even when the loops run faster/slower the distance moved is still correct
+            float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            if (Xin.KeyboardState.IsKeyDown(Keys.Z) || Xin.KeyboardState.IsKeyDown(Keys.Up))
+            {
+                float newPosition = Player1.Position.Y - (delta * Player1.Velocity.Y);
+                Player1.Position.Y = (newPosition < 0 ? 0 : newPosition);
+            }
+            else if (Xin.KeyboardState.IsKeyDown(Keys.S) || Xin.KeyboardState.IsKeyDown(Keys.Down))
+            {
+                float newPosition = Player1.Position.Y + (delta * Player1.Velocity.Y);
+                int maxHeight = TargetHeight - Player1.BoundingBox.Height;
+                Player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
+            }
+            
             base.Update(gameTime);
         }
 
