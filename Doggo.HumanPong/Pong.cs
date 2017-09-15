@@ -36,6 +36,7 @@ namespace Doggo.HumanPong
         }
         #endregion
 
+        #region Constructor Region
         public Pong()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -51,7 +52,9 @@ namespace Doggo.HumanPong
             SetWindowResolution();
             IsMouseVisible = true;
         }
+        #endregion
 
+        #region Method Region
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -83,12 +86,15 @@ namespace Doggo.HumanPong
             paddleTexture.SetData(paddleTextureData);
             
             // distance from the side of the screen
-            float offset = TargetWidth * 0.01f;
+            float distanceToEdge = TargetWidth * 0.01f;
+            float centerOfPaddle = paddleTexture.Width / 2f;
+            float y = (TargetHeight - paddleTexture.Height) / 2f;
+            float x = distanceToEdge - centerOfPaddle;
 
-            Vector2 positionP1 = new Vector2(offset - (paddleTexture.Width / 2), (TargetHeight - paddleTexture.Height) / 2);
+            Vector2 positionP1 = new Vector2(x, y);
             Player1 = new Paddle(this, paddleTexture, positionP1);
 
-            Vector2 positionP2 = new Vector2((TargetWidth - offset) - (paddleTexture.Width / 2), (TargetHeight - paddleTexture.Height) / 2);
+            Vector2 positionP2 = new Vector2(TargetWidth - x, y);
             Player2 = new Paddle(this, paddleTexture, positionP2);
         }
 
@@ -144,5 +150,6 @@ namespace Doggo.HumanPong
 
             scaleMatrix = Matrix.CreateScale(scaleWidth, scaleHeight, 1);
         }
+        #endregion
     }
 }
