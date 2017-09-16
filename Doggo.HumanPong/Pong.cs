@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Doggo.HumanPong.Components.GameObjects;
+﻿using Doggo.HumanPong.Components.GameObjects;
 using Doggo.HumanPong.Components.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,16 +15,18 @@ namespace Doggo.HumanPong
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public const int TargetWidth = 1280; //1920
-        public const int TargetHeight = 720; //1080
+        public const int TargetWidth = 1920; //1280
+        public const int TargetHeight = 1080; //720
         Matrix scaleMatrix;
 
         FrameRateCounter fpsCounter;
 
+        Texture2D background;
+
         Paddle Player1;
         Paddle Player2;
 
-        Ball Ball1;
+        Ball Ball;
         #endregion
 
         #region Property Region
@@ -91,6 +92,9 @@ namespace Doggo.HumanPong
                 paddleTextureData[i] = Color.Red;
             paddleTexture.SetData(paddleTextureData);*/
 
+            // Background
+            background = Content.Load<Texture2D>(@"Graphics\Backgrounds\Playfield");
+
             // Paddles
             Texture2D paddleTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Paddle");
 
@@ -111,7 +115,7 @@ namespace Doggo.HumanPong
             float ballY = (TargetHeight - ballTexture.Height) / 2f;
 
             Vector2 ballPosition = new Vector2(ballX, ballY);
-            Ball1 = new Ball(this, ballTexture, ballPosition);
+            Ball = new Ball(this, ballTexture, ballPosition);
         }
 
         /// <summary>
@@ -177,10 +181,12 @@ namespace Doggo.HumanPong
             // the scaling will have a bug when in 4:3 fullscreen it won't display the pads in the correct position
             spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, scaleMatrix);
 
+            spriteBatch.Draw(background, new Rectangle(0, 0, TargetWidth, TargetHeight), Color.White);
+
             Player1.Draw(spriteBatch);
             Player2.Draw(spriteBatch);
 
-            Ball1.Draw(spriteBatch);
+            Ball.Draw(spriteBatch);
 
             spriteBatch.End();
 
