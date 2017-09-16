@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\GameObjects\Ball.cs" />
     <Compile Include="Components\GameObjects\CollisionObject.cs" />
     <Compile Include="Components\Utility\Xin.cs" />
     <Compile Include="Components\Utility\FrameRateCounter.cs" />
