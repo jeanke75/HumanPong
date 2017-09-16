@@ -1,9 +1,8 @@
 ﻿using System;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Doggo.HumanPong.Components.WindowObjects.FrameCounter
+namespace Doggo.HumanPong.Components.Utility
 {
     public class FrameRateCounter : DrawableGameComponent
     {

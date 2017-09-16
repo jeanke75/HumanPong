@@ -1,12 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Graphics;
-
-using Doggo.HumanPong.Components.WindowObjects.Paddle;
-using Doggo.HumanPong.Components.WindowObjects.FrameCounter;
+﻿using System.Diagnostics;
+using Doggo.HumanPong.Components.GameObjects;
 using Doggo.HumanPong.Components.Utility;
-using System;
-using System.Diagnostics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Doggo.HumanPong
 {
@@ -54,7 +51,7 @@ namespace Doggo.HumanPong
             if (IsFixedTimeStep)
                 TargetElapsedTime = System.TimeSpan.FromMilliseconds(1000.0f / 60);
 
-            SetWindowResolution();
+            SetWindowResolution(400, 300);
             IsMouseVisible = true;
         }
         #endregion
