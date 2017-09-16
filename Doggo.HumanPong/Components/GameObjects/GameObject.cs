@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Doggo.HumanPong.Components.GameObjects
 {
-    public class CollisionObject
+    public class GameObject
     {
         #region Field region
         protected Texture2D texture;
@@ -22,13 +22,13 @@ namespace Doggo.HumanPong.Components.GameObjects
         #endregion
 
         #region Constructor Region
-        public CollisionObject(Texture2D texture, Vector2 position)
+        public GameObject(Texture2D texture, Vector2 position)
         {
             this.texture = texture;
             this.Position = position;
         }
 
-        public CollisionObject(Texture2D texture, Vector2 position, Vector2 velocity) : this(texture, position)
+        public GameObject(Texture2D texture, Vector2 position, Vector2 velocity) : this(texture, position)
         {
             this.Velocity = velocity;
         }

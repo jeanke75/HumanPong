@@ -1,4 +1,5 @@
 ﻿using Doggo.HumanPong.Components.GameObjects;
+using Doggo.HumanPong.Components.GameState;
 using Doggo.HumanPong.Components.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -19,14 +20,16 @@ namespace Doggo.HumanPong
         public const int TargetHeight = 1080; //720
         Matrix scaleMatrix;
 
+        GameStateManager gameStateManager;
+
         FrameRateCounter fpsCounter;
 
         Texture2D background;
 
-        Paddle Player1;
-        Paddle Player2;
+        GameObject Player1;
+        GameObject Player2;
 
-        Ball Ball;
+        GameObject Ball;
         #endregion
 
         #region Property Region
@@ -68,9 +71,17 @@ namespace Doggo.HumanPong
         /// </summary>
         protected override void Initialize()
         {
+            // input helper
             Components.Add(new Xin(this));
+
+            // fps counter
             fpsCounter = new FrameRateCounter(this);
             Components.Add(fpsCounter);
+
+            // state manager
+            gameStateManager = new GameStateManager(this);
+            Components.Add(gameStateManager);
+
             base.Initialize();
         }
 
@@ -102,11 +113,13 @@ namespace Doggo.HumanPong
             float centerOfPaddle = paddleTexture.Width / 2f;
             float y = (TargetHeight - paddleTexture.Height) / 2f;
 
+            Vector2 paddleVelocity = new Vector2(0, 100);
+
             Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
-            Player1 = new Paddle(this, paddleTexture, positionP1);
+            Player1 = new GameObject(paddleTexture, positionP1, paddleVelocity);
 
             Vector2 positionP2 = new Vector2(TargetWidth - distanceToEdge - centerOfPaddle, y);
-            Player2 = new Paddle(this, paddleTexture, positionP2);
+            Player2 = new GameObject(paddleTexture, positionP2, paddleVelocity);
 
             // Ball
             Texture2D ballTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Ball");
@@ -115,7 +128,7 @@ namespace Doggo.HumanPong
             float ballY = (TargetHeight - ballTexture.Height) / 2f;
 
             Vector2 ballPosition = new Vector2(ballX, ballY);
-            Ball = new Ball(this, ballTexture, ballPosition);
+            Ball = new GameObject(ballTexture, ballPosition, new Vector2(-500, 0));
         }
 
         /// <summary>
@@ -156,15 +169,11 @@ namespace Doggo.HumanPong
                 Player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
 
-            if (Ball1.BoundingBox.Center == Player1.BoundingBox.Center || Ball1.BoundingBox.Center == Player2.BoundingBox.Center)
+            // needs a bit of rework, because it doesn't always hit the paddle. sometimes it bounces off the air and sometimes it goes inside
+            Ball.Position += Ball.Velocity * delta;
+            if (Ball.BoundingBox.Intersects(Player1.BoundingBox) || Ball.BoundingBox.Intersects(Player2.BoundingBox))
             {
-                float newBallPos = Ball1.Position.X - (delta * Ball1.Velocity.X);
-                Ball1.Position.X = newBallPos;
-            }
-            else
-            {
-                float newBallPos = Ball1.Position.X - (delta * Ball1.Velocity.X);
-                Ball1.Position.X = newBallPos;
+                Ball.Velocity *= -1;
             }
             
             base.Update(gameTime);
