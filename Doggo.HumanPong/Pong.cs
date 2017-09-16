@@ -26,8 +26,6 @@ namespace Doggo.HumanPong
         Paddle Player2;
 
         Ball Ball1;
-
-        Stopwatch sw = new Stopwatch();
         #endregion
 
         #region Property Region
@@ -93,12 +91,11 @@ namespace Doggo.HumanPong
                 paddleTextureData[i] = Color.Red;
             paddleTexture.SetData(paddleTextureData);*/
 
+            // Paddles
             Texture2D paddleTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Paddle");
-            Texture2D ballTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Ball");
 
-            // Paddle Init
             float distanceToEdge = TargetWidth * 0.01f;
-            float centerOfPaddle = (TargetWidth - paddleTexture.Width) / 2f;
+            float centerOfPaddle = paddleTexture.Width / 2f;
             float y = (TargetHeight - paddleTexture.Height) / 2f;
 
             Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
@@ -107,15 +104,14 @@ namespace Doggo.HumanPong
             Vector2 positionP2 = new Vector2(TargetWidth - distanceToEdge - centerOfPaddle, y);
             Player2 = new Paddle(this, paddleTexture, positionP2);
 
-            // Init Ball
+            // Ball
+            Texture2D ballTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Ball");
 
-            float distanceToMiddle = (TargetWidth - ballTexture.Width) / 2f;
-            float bY = (TargetHeight - ballTexture.Height) / 2f;
+            float ballX = (TargetWidth - ballTexture.Width) / 2f;
+            float ballY = (TargetHeight - ballTexture.Height) / 2f;
 
-            Vector2 ballPosition = new Vector2(distanceToMiddle, bY);
+            Vector2 ballPosition = new Vector2(ballX, ballY);
             Ball1 = new Ball(this, ballTexture, ballPosition);
-
-            sw.Start();
         }
 
         /// <summary>
