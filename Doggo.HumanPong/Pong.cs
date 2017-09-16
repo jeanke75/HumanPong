@@ -20,6 +20,8 @@ namespace Doggo.HumanPong
         public const int TargetHeight = 720; //1080
         Matrix scaleMatrix;
 
+        FrameRateCounter fpsCounter;
+
         Paddle Player1;
         Paddle Player2;
 
@@ -44,14 +46,14 @@ namespace Doggo.HumanPong
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            //graphics.IsFullScreen = true; 
+            graphics.IsFullScreen = true; 
             graphics.SynchronizeWithVerticalRetrace = false; //vsync
             //graphics.PreferredBackBufferFormat = SurfaceFormat.Alpha8;
             IsFixedTimeStep = false;
             if (IsFixedTimeStep)
                 TargetElapsedTime = System.TimeSpan.FromMilliseconds(1000.0f / 60);
 
-            SetWindowResolution(400, 300);
+            SetWindowResolution();
             IsMouseVisible = true;
         }
         #endregion
@@ -66,7 +68,8 @@ namespace Doggo.HumanPong
         protected override void Initialize()
         {
             Components.Add(new Xin(this));
-            Components.Add(new FrameRateCounter(this));
+            fpsCounter = new FrameRateCounter(this);
+            Components.Add(fpsCounter);
             base.Initialize();
         }
 
@@ -77,7 +80,6 @@ namespace Doggo.HumanPong
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
             /*
             // create a solid color texture (without a png file), can be replaced by a premade image file using Content.Load<Texture2D>("contentFolderStructure\fileNameWithoutExtension")
             int paddleWidth = 5;
@@ -127,6 +129,10 @@ namespace Doggo.HumanPong
             //used to calculate movement according to time passed, so that even when the loops run faster/slower the distance moved is still correct
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            // show/hide fps counter
+            if (Xin.CheckKeyReleased(Keys.F1)) fpsCounter.IsVisible = !fpsCounter.IsVisible;
+
+            // move the left paddle up and down
             if (Xin.KeyboardState.IsKeyDown(Keys.Z) || Xin.KeyboardState.IsKeyDown(Keys.Up))
             {
                 float newPosition = Player1.Position.Y - (delta * Player1.Velocity.Y);
@@ -138,6 +144,7 @@ namespace Doggo.HumanPong
                 int maxHeight = TargetHeight - Player1.BoundingBox.Height;
                 Player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
+
             
             base.Update(gameTime);
         }

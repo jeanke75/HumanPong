@@ -13,6 +13,16 @@ namespace Doggo.HumanPong.Components.Utility
         int frameRate = 0;
         int frameCounter = 0;
         TimeSpan elapsedTime = TimeSpan.Zero;
+
+        bool isVisible = false;
+        #endregion
+
+        #region Property Region
+        public bool IsVisible
+        {
+            get { return isVisible; }
+            set { isVisible = value; }
+        }
         #endregion
 
         #region Constructor Region
@@ -50,12 +60,15 @@ namespace Doggo.HumanPong.Components.Utility
         {
             frameCounter++;
 
-            GameRef.SpriteBatch.Begin();
+            if (isVisible)
+            {
+                GameRef.SpriteBatch.Begin();
 
-            GameRef.SpriteBatch.DrawString(spriteFont, string.Format("fps: {0}", frameRate), new Vector2(11, 11), Color.Black);
-            GameRef.SpriteBatch.DrawString(spriteFont, string.Format("fps: {0}", frameRate), new Vector2(10, 10), Color.White);
+                GameRef.SpriteBatch.DrawString(spriteFont, string.Format("fps: {0}", frameRate), new Vector2(11, 11), Color.Black);
+                GameRef.SpriteBatch.DrawString(spriteFont, string.Format("fps: {0}", frameRate), new Vector2(10, 10), Color.White);
 
-            GameRef.SpriteBatch.End();
+                GameRef.SpriteBatch.End();
+            }
         }
         #endregion
     }
