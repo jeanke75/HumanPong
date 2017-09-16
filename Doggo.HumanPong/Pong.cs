@@ -46,7 +46,7 @@ namespace Doggo.HumanPong
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.IsFullScreen = true; 
+            graphics.IsFullScreen = false; 
             graphics.SynchronizeWithVerticalRetrace = false; //vsync
             //graphics.PreferredBackBufferFormat = SurfaceFormat.Alpha8;
             IsFixedTimeStep = false;
@@ -152,6 +152,16 @@ namespace Doggo.HumanPong
                 Player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
 
+            if (Ball1.BoundingBox.Center == Player1.BoundingBox.Center || Ball1.BoundingBox.Center == Player2.BoundingBox.Center)
+            {
+                float newBallPos = Ball1.Position.X - (delta * Ball1.Velocity.X);
+                Ball1.Position.X = newBallPos;
+            }
+            else
+            {
+                float newBallPos = Ball1.Position.X - (delta * Ball1.Velocity.X);
+                Ball1.Position.X = newBallPos;
+            }
             
             base.Update(gameTime);
         }

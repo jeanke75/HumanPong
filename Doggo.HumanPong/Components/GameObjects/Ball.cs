@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Doggo.HumanPong.Components.GameObjects
@@ -18,7 +17,7 @@ namespace Doggo.HumanPong.Components.GameObjects
         public Ball(Game game, Texture2D texture, Vector2 position) : base(texture, position)
         {
             GameRef = game as Pong;
-            //Velocity = new Vector2();
+            Velocity = new Vector2(-100, 0);
         }
         #endregion
 
