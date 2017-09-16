@@ -23,6 +23,8 @@ namespace Doggo.HumanPong
         Paddle Player1;
         Paddle Player2;
 
+        Ball Ball1;
+
         Stopwatch sw = new Stopwatch();
         #endregion
 
@@ -51,7 +53,7 @@ namespace Doggo.HumanPong
             if (IsFixedTimeStep)
                 TargetElapsedTime = System.TimeSpan.FromMilliseconds(1000.0f / 60);
 
-            SetWindowResolution(400, 300);
+            SetWindowResolution();
             IsMouseVisible = true;
         }
         #endregion
@@ -90,10 +92,11 @@ namespace Doggo.HumanPong
             paddleTexture.SetData(paddleTextureData);*/
 
             Texture2D paddleTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Paddle");
+            Texture2D ballTexture = Content.Load<Texture2D>(@"Graphics\Sprites\Ball");
 
-            // distance from the side of the screen
+            // Paddle Init
             float distanceToEdge = TargetWidth * 0.01f;
-            float centerOfPaddle = paddleTexture.Width / 2f;
+            float centerOfPaddle = (TargetWidth - paddleTexture.Width) / 2f;
             float y = (TargetHeight - paddleTexture.Height) / 2f;
 
             Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
@@ -101,6 +104,14 @@ namespace Doggo.HumanPong
 
             Vector2 positionP2 = new Vector2(TargetWidth - distanceToEdge - centerOfPaddle, y);
             Player2 = new Paddle(this, paddleTexture, positionP2);
+
+            // Init Ball
+
+            float distanceToMiddle = (TargetWidth - ballTexture.Width) / 2f;
+            float bY = (TargetHeight - ballTexture.Height) / 2f;
+
+            Vector2 ballPosition = new Vector2(distanceToMiddle, bY);
+            Ball1 = new Ball(this, ballTexture, ballPosition);
 
             sw.Start();
         }
@@ -152,8 +163,12 @@ namespace Doggo.HumanPong
 
             // the scaling will have a bug when in 4:3 fullscreen it won't display the pads in the correct position
             spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, scaleMatrix);
+
             Player1.Draw(spriteBatch);
             Player2.Draw(spriteBatch);
+
+            Ball1.Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
