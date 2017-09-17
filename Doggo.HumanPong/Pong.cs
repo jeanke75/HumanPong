@@ -113,7 +113,7 @@ namespace Doggo.HumanPong
             float centerOfPaddle = paddleTexture.Width / 2f;
             float y = (TargetHeight - paddleTexture.Height) / 2f;
 
-            Vector2 paddleVelocity = new Vector2(0, 100);
+            Vector2 paddleVelocity = new Vector2(0, 500);
 
             Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
             Player1 = new GameObject(paddleTexture, positionP1, paddleVelocity);
@@ -128,7 +128,7 @@ namespace Doggo.HumanPong
             float ballY = (TargetHeight - ballTexture.Height) / 2f;
 
             Vector2 ballPosition = new Vector2(ballX, ballY);
-            Ball = new GameObject(ballTexture, ballPosition, new Vector2(-500, 0));
+            Ball = new GameObject(ballTexture, ballPosition, new Vector2(-500, -250));
         }
 
         /// <summary>
@@ -157,23 +157,40 @@ namespace Doggo.HumanPong
             if (Xin.CheckKeyReleased(Keys.F1)) fpsCounter.IsVisible = !fpsCounter.IsVisible;
 
             // move the left paddle up and down
-            if (Xin.KeyboardState.IsKeyDown(Keys.Z) || Xin.KeyboardState.IsKeyDown(Keys.Up))
+            if (Xin.KeyboardState.IsKeyDown(Keys.Z))// || Xin.KeyboardState.IsKeyDown(Keys.Up))
             {
                 float newPosition = Player1.Position.Y - (delta * Player1.Velocity.Y);
                 Player1.Position.Y = (newPosition < 0 ? 0 : newPosition);
             }
-            else if (Xin.KeyboardState.IsKeyDown(Keys.S) || Xin.KeyboardState.IsKeyDown(Keys.Down))
+            else if (Xin.KeyboardState.IsKeyDown(Keys.S))// || Xin.KeyboardState.IsKeyDown(Keys.Down))
             {
                 float newPosition = Player1.Position.Y + (delta * Player1.Velocity.Y);
                 int maxHeight = TargetHeight - Player1.BoundingBox.Height;
                 Player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
 
+            if (Xin.KeyboardState.IsKeyDown(Keys.Up))
+            {
+                float newPosition = Player2.Position.Y - (delta * Player2.Velocity.Y);
+                Player2.Position.Y = (newPosition < 0 ? 0 : newPosition);
+            }
+            else if (Xin.KeyboardState.IsKeyDown(Keys.Down))
+            {
+                float newPosition = Player2.Position.Y + (delta * Player2.Velocity.Y);
+                int maxHeight = TargetHeight - Player2.BoundingBox.Height;
+                Player2.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
+            }
+
             // needs a bit of rework, because it doesn't always hit the paddle. sometimes it bounces off the air and sometimes it goes inside
             Ball.Position += Ball.Velocity * delta;
-            if (Ball.BoundingBox.Intersects(Player1.BoundingBox) || Ball.BoundingBox.Intersects(Player2.BoundingBox))
+            if ((Ball.BoundingBox.Intersects(Player1.BoundingBox) && Ball.Velocity.X < 0) || (Ball.BoundingBox.Intersects(Player2.BoundingBox) && Ball.Velocity.X > 0))
             {
-                Ball.Velocity *= -1;
+                Ball.Velocity.X *= -1;
+            }
+
+            if ((Ball.BoundingBox.Top <= 0 && Ball.Velocity.Y < 0) || (Ball.BoundingBox.Bottom >= TargetHeight && Ball.Velocity.Y > 0))
+            {
+                Ball.Velocity.Y *= -1;
             }
             
             base.Update(gameTime);
