@@ -36,6 +36,11 @@ namespace Doggo.HumanPong
         {
             get { return scaleMatrix; }
         }
+
+        public GameStateManager GameStateManager
+        {
+            get { return gameStateManager; }
+        }
         #endregion
 
         #region Constructor Region
