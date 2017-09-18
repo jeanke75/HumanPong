@@ -42,11 +42,13 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Components\GameObjects\Ball.cs" />
-    <Compile Include="Components\GameObjects\CollisionObject.cs" />
+    <Compile Include="Components\GameObjects\GameObject.cs" />
+    <Compile Include="Components\GameState\GameState.cs" />
+    <Compile Include="Components\GameState\GameStateManager.cs" />
+    <Compile Include="Components\GameState\States\PlayState.cs" />
+    <Compile Include="Components\GameState\States\BaseGameState.cs" />
     <Compile Include="Components\Utility\Xin.cs" />
     <Compile Include="Components\Utility\FrameRateCounter.cs" />
-    <Compile Include="Components\GameObjects\Paddle.cs" />
     <Compile Include="Pong.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
