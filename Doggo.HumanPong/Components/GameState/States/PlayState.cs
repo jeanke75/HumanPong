@@ -131,14 +131,14 @@ namespace Doggo.HumanPong.Components.GameState.States
                 ballMoving = false;
                 ball.Position = BallCenterPosition;
                 scoreBoard.Player2Scored();
-                // reset player paddles
+                ResetPaddles();
             }
             else if (ball.Position.X >= Pong.TargetWidth)
             {
                 ballMoving = false;
                 ball.Position = BallCenterPosition;
                 scoreBoard.Player1Scored();
-                // reset player paddles
+                ResetPaddles();
             }
 
             base.Update(gameTime);
@@ -170,6 +170,12 @@ namespace Doggo.HumanPong.Components.GameState.States
         public void SetUpLocalMultiplayerGame()
         {
             
+        }
+
+        private void ResetPaddles()
+        {
+            player1.Position.Y = (Pong.TargetHeight - player1.BoundingBox.Height) / 2f;
+            player2.Position.Y = (Pong.TargetHeight - player2.BoundingBox.Height) / 2f;
         }
         #endregion
     }
