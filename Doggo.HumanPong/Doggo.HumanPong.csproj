@@ -48,6 +48,8 @@
     <Compile Include="Components\GameState\GameStateManager.cs" />
     <Compile Include="Components\GameState\States\PlayState.cs" />
     <Compile Include="Components\GameState\States\BaseGameState.cs" />
+    <Compile Include="Components\ParticleEffects\Particle.cs" />
+    <Compile Include="Components\ParticleEffects\ParticleEngine.cs" />
     <Compile Include="Components\Utility\Xin.cs" />
     <Compile Include="Components\Utility\FrameRateCounter.cs" />
     <Compile Include="Pong.cs" />

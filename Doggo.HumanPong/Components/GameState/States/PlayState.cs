@@ -1,4 +1,6 @@
-﻿using Doggo.HumanPong.Components.GameObjects;
+﻿using System.Collections.Generic;
+using Doggo.HumanPong.Components.GameObjects;
+using Doggo.HumanPong.Components.ParticleEffects;
 using Doggo.HumanPong.Components.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +22,8 @@ namespace Doggo.HumanPong.Components.GameState.States
         bool ballMoving = false;
 
         Vector2 BallCenterPosition;
+
+        ParticleEngine particleEngine;
         #endregion
 
         #region Constructor Region
@@ -78,6 +82,11 @@ namespace Doggo.HumanPong.Components.GameState.States
             BallCenterPosition = new Vector2(ballX, ballY);
             Vector2 ballPosition = new Vector2(ballX, ballY);
             ball = new GameObject(ballTexture, ballPosition, new Vector2(-750, -500));
+
+            // Particle Engine
+            List<Texture2D> textures = new List<Texture2D>();
+            textures.Add(GameRef.Content.Load<Texture2D>(@"Graphics\Particles\Circle"));
+            particleEngine = new ParticleEngine(textures, BallCenterPosition);
         }
 
         public override void Update(GameTime gameTime)
@@ -115,6 +124,9 @@ namespace Doggo.HumanPong.Components.GameState.States
 
             if (ballMoving)
             {
+                particleEngine.EmitterLocation = new Vector2(ball.BoundingBox.Center.X, ball.BoundingBox.Center.Y);
+                particleEngine.Update();
+
                 ball.Position += ball.Velocity * delta;
                 // ball <> player collision
                 if (ball.BoundingBox.Intersects(player1.BoundingBox) && ball.Velocity.X < 0)
@@ -151,6 +163,7 @@ namespace Doggo.HumanPong.Components.GameState.States
                     ball.Position = BallCenterPosition;
                     scoreBoard.Player2Scored();
                     ResetPaddles();
+                    particleEngine.RemoveAllParticles();
                 }
                 else if (ball.Position.X >= Pong.TargetWidth)
                 {
@@ -158,6 +171,7 @@ namespace Doggo.HumanPong.Components.GameState.States
                     ball.Position = BallCenterPosition;
                     scoreBoard.Player1Scored();
                     ResetPaddles();
+                    particleEngine.RemoveAllParticles();
                 }
             }
 
@@ -178,7 +192,11 @@ namespace Doggo.HumanPong.Components.GameState.States
             // draw player paddles
             player1.Draw(GameRef.SpriteBatch);
             player2.Draw(GameRef.SpriteBatch);
+            GameRef.SpriteBatch.End();
 
+            particleEngine.Draw(GameRef.SpriteBatch, GameRef.ScaleMatrix);
+
+            GameRef.SpriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, null, GameRef.ScaleMatrix);
             // draw ball
             ball.Draw(GameRef.SpriteBatch);
 
