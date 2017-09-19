@@ -113,32 +113,52 @@ namespace Doggo.HumanPong.Components.GameState.States
                 player2.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
 
-            // needs a bit of rework. sometimes it bounces off the air infront of the paddle and sometimes it goes inside
-            if (ballMoving) ball.Position += ball.Velocity * delta;
-            if ((ball.BoundingBox.Intersects(player1.BoundingBox) && ball.Velocity.X < 0) || (ball.BoundingBox.Intersects(player2.BoundingBox) && ball.Velocity.X > 0))
+            if (ballMoving)
             {
-                ball.Velocity.X *= -1;
-            }
+                ball.Position += ball.Velocity * delta;
+                // ball <> player collision
+                if (ball.BoundingBox.Intersects(player1.BoundingBox) && ball.Velocity.X < 0)
+                {
+                    ball.Velocity.X *= -1;
+                    float collisionSurfacePosition = player1.Position.X + player1.BoundingBox.Width;
+                    float collisionDepth = collisionSurfacePosition - ball.Position.X;
+                    ball.Position.X = collisionSurfacePosition + collisionDepth;
+                }
+                else if (ball.BoundingBox.Intersects(player2.BoundingBox) && ball.Velocity.X > 0)
+                {
+                    ball.Velocity.X *= -1;
+                    float collisionDepth = ball.Position.X + ball.BoundingBox.Width - player2.Position.X;
+                    ball.Position.X = player2.Position.X - collisionDepth;
+                }
 
-            if ((ball.BoundingBox.Top <= 0 && ball.Velocity.Y < 0) || (ball.BoundingBox.Bottom >= Pong.TargetHeight && ball.Velocity.Y > 0))
-            {
-                ball.Velocity.Y *= -1;
-            }
+                // ball <> top/bottom screen collision
+                if (ball.BoundingBox.Top <= 0 && ball.Velocity.Y < 0)
+                {
+                    ball.Velocity.Y *= -1;
+                    ball.Position.Y = ball.Position.Y * -1;
+                }
+                else if (ball.BoundingBox.Bottom >= Pong.TargetHeight && ball.Velocity.Y > 0)
+                {
+                    ball.Velocity.Y *= -1;
+                    float collisionDepth = ball.Position.Y + ball.BoundingBox.Height - Pong.TargetHeight;
+                    ball.Position.Y -= collisionDepth;
+                }
 
-            // update score
-            if (ball.Position.X <= 0)
-            {
-                ballMoving = false;
-                ball.Position = BallCenterPosition;
-                scoreBoard.Player2Scored();
-                ResetPaddles();
-            }
-            else if (ball.Position.X >= Pong.TargetWidth)
-            {
-                ballMoving = false;
-                ball.Position = BallCenterPosition;
-                scoreBoard.Player1Scored();
-                ResetPaddles();
+                // update score
+                if (ball.Position.X <= 0)
+                {
+                    ballMoving = false;
+                    ball.Position = BallCenterPosition;
+                    scoreBoard.Player2Scored();
+                    ResetPaddles();
+                }
+                else if (ball.Position.X >= Pong.TargetWidth)
+                {
+                    ballMoving = false;
+                    ball.Position = BallCenterPosition;
+                    scoreBoard.Player1Scored();
+                    ResetPaddles();
+                }
             }
 
             base.Update(gameTime);
