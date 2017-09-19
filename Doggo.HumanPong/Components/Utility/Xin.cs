@@ -12,12 +12,15 @@ namespace Doggo.HumanPong.Components.Utility
 
     public class Xin : GameComponent
     {
+        #region Field Region
         private static KeyboardState currentKeyboardState = Keyboard.GetState();
         private static KeyboardState previousKeyboardState = Keyboard.GetState();
 
         private static MouseState currentMouseState = Mouse.GetState();
         private static MouseState previousMouseState = Mouse.GetState();
+        #endregion
 
+        #region Property Region
         public static MouseState MouseState
         {
             get { return currentMouseState; }
@@ -37,12 +40,16 @@ namespace Doggo.HumanPong.Components.Utility
         {
             get { return previousMouseState; }
         }
+        #endregion
 
+        #region Constructor Region
         public Xin(Game game) : base(game)
         {
 
         }
+        #endregion
 
+        #region Method Region
         public override void Update(GameTime gameTime)
         {
             previousKeyboardState = currentKeyboardState;
@@ -79,5 +86,6 @@ namespace Doggo.HumanPong.Components.Utility
 
             return false;
         }
+        #endregion
     }
 }
