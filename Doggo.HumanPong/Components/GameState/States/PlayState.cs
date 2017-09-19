@@ -11,17 +11,15 @@ namespace Doggo.HumanPong.Components.GameState.States
         #region Field Region
         Texture2D background;
 
-        GameObject Player1;
-        GameObject Player2;
+        ScoreBoard scoreBoard;
 
-        GameObject Ball;
+        GameObject player1;
+        GameObject player2;
+
+        GameObject ball;
         bool ballMoving = false;
 
         Vector2 BallCenterPosition;
-
-        SpriteFont scoreFont;
-        byte scorePlayer1 = 0;
-        byte scorePlayer2 = 0;
         #endregion
 
         #region Constructor Region
@@ -53,6 +51,9 @@ namespace Doggo.HumanPong.Components.GameState.States
             // Background
             background = content.Load<Texture2D>(@"Graphics\Backgrounds\Playfield");
 
+            // ScoreBoard
+            scoreBoard = new ScoreBoard(GameRef);
+
             // Paddles
             Texture2D paddleTexture = content.Load<Texture2D>(@"Graphics\Sprites\Paddle");
 
@@ -63,10 +64,10 @@ namespace Doggo.HumanPong.Components.GameState.States
             Vector2 paddleVelocity = new Vector2(0, 500);
 
             Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
-            Player1 = new GameObject(paddleTexture, positionP1, paddleVelocity);
+            player1 = new GameObject(paddleTexture, positionP1, paddleVelocity);
 
             Vector2 positionP2 = new Vector2(Pong.TargetWidth - distanceToEdge - centerOfPaddle, y);
-            Player2 = new GameObject(paddleTexture, positionP2, paddleVelocity);
+            player2 = new GameObject(paddleTexture, positionP2, paddleVelocity);
 
             // Ball
             Texture2D ballTexture = content.Load<Texture2D>(@"Graphics\Sprites\Ball");
@@ -76,10 +77,7 @@ namespace Doggo.HumanPong.Components.GameState.States
 
             BallCenterPosition = new Vector2(ballX, ballY);
             Vector2 ballPosition = new Vector2(ballX, ballY);
-            Ball = new GameObject(ballTexture, ballPosition, new Vector2(-750, -500));
-
-            // Score font
-            scoreFont = content.Load<SpriteFont>(@"Fonts\ScoreFont");
+            ball = new GameObject(ballTexture, ballPosition, new Vector2(-750, -500));
         }
 
         public override void Update(GameTime gameTime)
@@ -93,53 +91,53 @@ namespace Doggo.HumanPong.Components.GameState.States
             // move the left paddle up and down
             if (Xin.KeyboardState.IsKeyDown(Keys.Z))// || Xin.KeyboardState.IsKeyDown(Keys.Up))
             {
-                float newPosition = Player1.Position.Y - (delta * Player1.Velocity.Y);
-                Player1.Position.Y = (newPosition < 0 ? 0 : newPosition);
+                float newPosition = player1.Position.Y - (delta * player1.Velocity.Y);
+                player1.Position.Y = (newPosition < 0 ? 0 : newPosition);
             }
             else if (Xin.KeyboardState.IsKeyDown(Keys.S))// || Xin.KeyboardState.IsKeyDown(Keys.Down))
             {
-                float newPosition = Player1.Position.Y + (delta * Player1.Velocity.Y);
-                int maxHeight = Pong.TargetHeight - Player1.BoundingBox.Height;
-                Player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
+                float newPosition = player1.Position.Y + (delta * player1.Velocity.Y);
+                int maxHeight = Pong.TargetHeight - player1.BoundingBox.Height;
+                player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
 
             if (Xin.KeyboardState.IsKeyDown(Keys.Up))
             {
-                float newPosition = Player2.Position.Y - (delta * Player2.Velocity.Y);
-                Player2.Position.Y = (newPosition < 0 ? 0 : newPosition);
+                float newPosition = player2.Position.Y - (delta * player2.Velocity.Y);
+                player2.Position.Y = (newPosition < 0 ? 0 : newPosition);
             }
             else if (Xin.KeyboardState.IsKeyDown(Keys.Down))
             {
-                float newPosition = Player2.Position.Y + (delta * Player2.Velocity.Y);
-                int maxHeight = Pong.TargetHeight - Player2.BoundingBox.Height;
-                Player2.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
+                float newPosition = player2.Position.Y + (delta * player2.Velocity.Y);
+                int maxHeight = Pong.TargetHeight - player2.BoundingBox.Height;
+                player2.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
             }
 
             // needs a bit of rework. sometimes it bounces off the air infront of the paddle and sometimes it goes inside
-            if (ballMoving) Ball.Position += Ball.Velocity * delta;
-            if ((Ball.BoundingBox.Intersects(Player1.BoundingBox) && Ball.Velocity.X < 0) || (Ball.BoundingBox.Intersects(Player2.BoundingBox) && Ball.Velocity.X > 0))
+            if (ballMoving) ball.Position += ball.Velocity * delta;
+            if ((ball.BoundingBox.Intersects(player1.BoundingBox) && ball.Velocity.X < 0) || (ball.BoundingBox.Intersects(player2.BoundingBox) && ball.Velocity.X > 0))
             {
-                Ball.Velocity.X *= -1;
+                ball.Velocity.X *= -1;
             }
 
-            if ((Ball.BoundingBox.Top <= 0 && Ball.Velocity.Y < 0) || (Ball.BoundingBox.Bottom >= Pong.TargetHeight && Ball.Velocity.Y > 0))
+            if ((ball.BoundingBox.Top <= 0 && ball.Velocity.Y < 0) || (ball.BoundingBox.Bottom >= Pong.TargetHeight && ball.Velocity.Y > 0))
             {
-                Ball.Velocity.Y *= -1;
+                ball.Velocity.Y *= -1;
             }
 
             // update score
-            if (Ball.Position.X <= 0)
+            if (ball.Position.X <= 0)
             {
                 ballMoving = false;
-                Ball.Position = BallCenterPosition;
-                scorePlayer2++;
+                ball.Position = BallCenterPosition;
+                scoreBoard.Player2Scored();
                 // reset player paddles
             }
-            else if (Ball.Position.X >= Pong.TargetWidth)
+            else if (ball.Position.X >= Pong.TargetWidth)
             {
                 ballMoving = false;
-                Ball.Position = BallCenterPosition;
-                scorePlayer1++;
+                ball.Position = BallCenterPosition;
+                scoreBoard.Player1Scored();
                 // reset player paddles
             }
 
@@ -155,29 +153,14 @@ namespace Doggo.HumanPong.Components.GameState.States
             GameRef.SpriteBatch.Draw(background, new Rectangle(0, 0, Pong.TargetWidth, Pong.TargetHeight), Color.White);
 
             // draw scores
-            // optimizations: calculation of score position can be put where the score is updated so it only recalculates when needed
-            //                the offset from the top off the screen might be the same for both scores, need to check if the measurestring height is the same for every number
-            float centerOfSCreenX = (Pong.TargetWidth / 2f);
-            float scoreOffSetX = 75f;
-
-            string scorePlayer1Str = scorePlayer1.ToString();
-            Vector2 fontsizeScorePlayer1 = scoreFont.MeasureString(scorePlayer1Str);
-            float score1Y = (Pong.TargetHeight - fontsizeScorePlayer1.Y) / 2f;
-            float score1X = centerOfSCreenX - fontsizeScorePlayer1.X - scoreOffSetX;
-            GameRef.SpriteBatch.DrawString(scoreFont, scorePlayer1Str, new Vector2(score1X, score1Y), Color.White);
-
-            string scorePlayer2Str = scorePlayer2.ToString();
-            Vector2 fontsizeScorePlayer2 = scoreFont.MeasureString(scorePlayer2Str);
-            float score2Y = (Pong.TargetHeight - fontsizeScorePlayer2.Y) / 2f;
-            float score2X = centerOfSCreenX + scoreOffSetX;
-            GameRef.SpriteBatch.DrawString(scoreFont, scorePlayer2Str, new Vector2(score2X, score2Y), Color.White);
+            scoreBoard.Draw(GameRef.SpriteBatch);
 
             // draw player paddles
-            Player1.Draw(GameRef.SpriteBatch);
-            Player2.Draw(GameRef.SpriteBatch);
+            player1.Draw(GameRef.SpriteBatch);
+            player2.Draw(GameRef.SpriteBatch);
 
             // draw ball
-            Ball.Draw(GameRef.SpriteBatch);
+            ball.Draw(GameRef.SpriteBatch);
 
             GameRef.SpriteBatch.End();
 
