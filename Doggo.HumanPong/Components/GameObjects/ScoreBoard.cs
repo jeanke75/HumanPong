@@ -38,6 +38,7 @@ namespace Doggo.HumanPong.Components.GameObjects
         }
         #endregion
 
+        #region Method Region
         public void Player1Scored()
         {
             scorePlayer1++;
@@ -71,5 +72,6 @@ namespace Doggo.HumanPong.Components.GameObjects
             spriteBatch.DrawString(scoreFont, scorePlayer1.ToString(), scorePositionPlayer1, Color.White);
             spriteBatch.DrawString(scoreFont, scorePlayer2.ToString(), scorePositionPlayer2, Color.White);
         }
+        #endregion
     }
 }
