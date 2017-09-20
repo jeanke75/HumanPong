@@ -98,12 +98,12 @@ namespace Doggo.HumanPong.Components.GameState.States
             if (!ballMoving && Xin.CheckKeyReleased(Keys.Space)) ballMoving = true;
 
             // move the left paddle up and down
-            if (Xin.KeyboardState.IsKeyDown(Keys.Z))// || Xin.KeyboardState.IsKeyDown(Keys.Up))
+            if (Xin.KeyboardState.IsKeyDown(Keys.Z))
             {
                 float newPosition = player1.Position.Y - (delta * player1.Velocity.Y);
                 player1.Position.Y = (newPosition < 0 ? 0 : newPosition);
             }
-            else if (Xin.KeyboardState.IsKeyDown(Keys.S))// || Xin.KeyboardState.IsKeyDown(Keys.Down))
+            else if (Xin.KeyboardState.IsKeyDown(Keys.S))
             {
                 float newPosition = player1.Position.Y + (delta * player1.Velocity.Y);
                 int maxHeight = Pong.TargetHeight - player1.BoundingBox.Height;
@@ -128,32 +128,33 @@ namespace Doggo.HumanPong.Components.GameState.States
                 particleEngine.Update();
 
                 ball.Position += ball.Velocity * delta;
+
+                // all positions are calculated using their position float values instead of the boundingbox rounded int values for accuracy
                 // ball <> player collision
                 if (ball.BoundingBox.Intersects(player1.BoundingBox) && ball.Velocity.X < 0)
                 {
                     ball.Velocity.X *= -1;
-                    float collisionSurfacePosition = player1.Position.X + player1.BoundingBox.Width;
-                    float collisionDepth = collisionSurfacePosition - ball.Position.X;
-                    ball.Position.X = collisionSurfacePosition + collisionDepth;
+                    float collisionDepth = player1.Position.X + player1.BoundingBox.Width - ball.Position.X;
+                    ball.Position.X += collisionDepth * 2;
                 }
                 else if (ball.BoundingBox.Intersects(player2.BoundingBox) && ball.Velocity.X > 0)
                 {
                     ball.Velocity.X *= -1;
                     float collisionDepth = ball.Position.X + ball.BoundingBox.Width - player2.Position.X;
-                    ball.Position.X = player2.Position.X - collisionDepth;
+                    ball.Position.X -= collisionDepth * 2;
                 }
 
                 // ball <> top/bottom screen collision
                 if (ball.BoundingBox.Top <= 0 && ball.Velocity.Y < 0)
                 {
                     ball.Velocity.Y *= -1;
-                    ball.Position.Y = ball.Position.Y * -1;
+                    ball.Position.Y *= -1;
                 }
                 else if (ball.BoundingBox.Bottom >= Pong.TargetHeight && ball.Velocity.Y > 0)
                 {
                     ball.Velocity.Y *= -1;
                     float collisionDepth = ball.Position.Y + ball.BoundingBox.Height - Pong.TargetHeight;
-                    ball.Position.Y -= collisionDepth;
+                    ball.Position.Y -= collisionDepth * 2;
                 }
 
                 // update score
