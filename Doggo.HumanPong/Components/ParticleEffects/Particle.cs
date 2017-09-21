@@ -17,11 +17,11 @@ namespace Doggo.HumanPong.Components.ParticleEffects
         public float AngularVelocity { get; set; }  // The speed that the angle is changing
         public Color Color { get; set; }            // The color of the particle
         public float Size { get; set; }             // The size of the particle
-        public int TTL { get; set; }                // The 'time to live' of the particle
+        public float TTL { get; set; }                // The 'time to live' of the particle
         #endregion
 
         #region Constructor Region
-        public Particle(Texture2D texture, Vector2 position, Vector2 velocity, float angle, float angularVelocity, Color color, float size, int ttl)
+        public Particle(Texture2D texture, Vector2 position, Vector2 velocity, float angle, float angularVelocity, Color color, float size, float ttl)
         {
             Texture = texture;
             Position = position;
@@ -35,9 +35,9 @@ namespace Doggo.HumanPong.Components.ParticleEffects
         #endregion
 
         #region Method Region
-        public void Update()
+        public void Update(float delta)
         {
-            TTL--;
+            TTL -= delta;
             Position += Velocity;
             Angle += AngularVelocity;
         }

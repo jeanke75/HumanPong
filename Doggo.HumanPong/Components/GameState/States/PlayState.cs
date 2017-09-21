@@ -125,7 +125,7 @@ namespace Doggo.HumanPong.Components.GameState.States
             if (ballMoving)
             {
                 particleEngine.EmitterLocation = new Vector2(ball.BoundingBox.Center.X, ball.BoundingBox.Center.Y);
-                particleEngine.Update();
+                particleEngine.Update(delta);
 
                 ball.Position += ball.Velocity * delta;
 

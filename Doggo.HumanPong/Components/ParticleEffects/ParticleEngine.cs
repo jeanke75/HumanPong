@@ -12,6 +12,7 @@ namespace Doggo.HumanPong.Components.ParticleEffects
         private Random random;
         private List<Particle> particles;
         private List<Texture2D> textures;
+        private float ttl = 1f;
         #endregion
 
         #region Property Region
@@ -35,14 +36,9 @@ namespace Doggo.HumanPong.Components.ParticleEffects
             Vector2 position = EmitterLocation;
             float angle = 0;
             float angularVelocity = 0.1f * (float)(random.NextDouble() * 2 - 1);
-            Color color = new Color(
-                    (float)random.NextDouble(),
-                    (float)random.NextDouble(),
-                    (float)random.NextDouble());
             float size = (float)random.NextDouble();
-            int ttl = 20 + random.Next(40);
 
-            return new Particle(texture, position, Vector2.Zero, angle, angularVelocity, color, size, ttl);
+            return new Particle(texture, position, Vector2.Zero, angle, angularVelocity, Color.White, size, ttl);
         }
 
         public void RemoveAllParticles()
@@ -50,13 +46,14 @@ namespace Doggo.HumanPong.Components.ParticleEffects
             particles.Clear();
         }
 
-        public void Update()
+        public void Update(float delta)
         {
             particles.Add(GenerateNewParticle());
 
             for (int particle = 0; particle < particles.Count; particle++)
             {
-                particles[particle].Update();
+                particles[particle].Size *= particles[particle].TTL / ttl;
+                particles[particle].Update(delta);
                 if (particles[particle].TTL <= 0)
                 {
                     particles.RemoveAt(particle);
