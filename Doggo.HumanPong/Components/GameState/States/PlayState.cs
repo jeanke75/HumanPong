@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Doggo.HumanPong.Components.Controller;
 using Doggo.HumanPong.Components.GameObjects;
 using Doggo.HumanPong.Components.ParticleEffects;
 using Doggo.HumanPong.Components.Utility;
@@ -15,8 +16,10 @@ namespace Doggo.HumanPong.Components.GameState.States
 
         ScoreBoard scoreBoard;
 
-        GameObject player1;
-        GameObject player2;
+        IPlayer player1, player2;
+
+        GameObject paddlePlayer1;
+        GameObject paddlePlayer2;
 
         GameObject ball;
         bool ballMoving = false;
@@ -27,9 +30,26 @@ namespace Doggo.HumanPong.Components.GameState.States
         #endregion
 
         #region Constructor Region
-        public PlayState(Game game) : base(game)
+        public static PlayState CreateAIGame(Game game)
+        {
+            return new PlayState(game, new AIPlayer(), new AIPlayer());
+        }
+
+        public static PlayState CreateSinglePlayerGame(Game game)
+        {
+            return new PlayState(game, new HumanPlayer(Keys.Z, Keys.S), new AIPlayer());
+        }
+
+        public static PlayState CreateLocalMultiPlayerGame(Game game)
+        {
+            return new PlayState(game, new HumanPlayer(Keys.Z, Keys.S), new HumanPlayer(Keys.Up, Keys.Down));
+        }
+
+        private PlayState(Game game, IPlayer player1, IPlayer player2) : base(game)
         {
             game.Services.AddService(typeof(PlayState), this);
+            this.player1 = player1;
+            this.player2 = player2;
         }
         #endregion
 
@@ -68,10 +88,10 @@ namespace Doggo.HumanPong.Components.GameState.States
             Vector2 paddleVelocity = new Vector2(0, 500);
 
             Vector2 positionP1 = new Vector2(distanceToEdge - centerOfPaddle, y);
-            player1 = new GameObject(paddleTexture, positionP1, paddleVelocity);
+            paddlePlayer1 = new GameObject(paddleTexture, positionP1, paddleVelocity);
 
             Vector2 positionP2 = new Vector2(Pong.TargetWidth - distanceToEdge - centerOfPaddle, y);
-            player2 = new GameObject(paddleTexture, positionP2, paddleVelocity);
+            paddlePlayer2 = new GameObject(paddleTexture, positionP2, paddleVelocity);
 
             // Ball
             Texture2D ballTexture = content.Load<Texture2D>(@"Graphics\Sprites\Ball");
@@ -98,7 +118,11 @@ namespace Doggo.HumanPong.Components.GameState.States
             if (!ballMoving && Xin.CheckKeyReleased(Keys.Space)) ballMoving = true;
 
             // move the left paddle up and down
-            if (Xin.KeyboardState.IsKeyDown(Keys.Z))
+            HandlePlayerState(player1.GetState(ball, paddlePlayer1), paddlePlayer1, delta);
+            HandlePlayerState(player2.GetState(ball, paddlePlayer2), paddlePlayer2, delta);
+
+
+            /*if (Xin.KeyboardState.IsKeyDown(Keys.Z))
             {
                 float newPosition = player1.Position.Y - (delta * player1.Velocity.Y);
                 player1.Position.Y = (newPosition < 0 ? 0 : newPosition);
@@ -108,9 +132,9 @@ namespace Doggo.HumanPong.Components.GameState.States
                 float newPosition = player1.Position.Y + (delta * player1.Velocity.Y);
                 int maxHeight = Pong.TargetHeight - player1.BoundingBox.Height;
                 player1.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
-            }
+            }*/
 
-            if (Xin.KeyboardState.IsKeyDown(Keys.Up))
+            /*if (Xin.KeyboardState.IsKeyDown(Keys.Up))
             {
                 float newPosition = player2.Position.Y - (delta * player2.Velocity.Y);
                 player2.Position.Y = (newPosition < 0 ? 0 : newPosition);
@@ -120,7 +144,7 @@ namespace Doggo.HumanPong.Components.GameState.States
                 float newPosition = player2.Position.Y + (delta * player2.Velocity.Y);
                 int maxHeight = Pong.TargetHeight - player2.BoundingBox.Height;
                 player2.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
-            }
+            }*/
 
             if (ballMoving)
             {
@@ -131,16 +155,16 @@ namespace Doggo.HumanPong.Components.GameState.States
 
                 // all positions are calculated using their position float values instead of the boundingbox rounded int values for accuracy
                 // ball <> player collision
-                if (ball.BoundingBox.Intersects(player1.BoundingBox) && ball.Velocity.X < 0)
+                if (ball.BoundingBox.Intersects(paddlePlayer1.BoundingBox) && ball.Velocity.X < 0)
                 {
                     ball.Velocity.X *= -1;
-                    float collisionDepth = player1.Position.X + player1.BoundingBox.Width - ball.Position.X;
+                    float collisionDepth = paddlePlayer1.Position.X + paddlePlayer1.BoundingBox.Width - ball.Position.X;
                     ball.Position.X += collisionDepth * 2;
                 }
-                else if (ball.BoundingBox.Intersects(player2.BoundingBox) && ball.Velocity.X > 0)
+                else if (ball.BoundingBox.Intersects(paddlePlayer2.BoundingBox) && ball.Velocity.X > 0)
                 {
                     ball.Velocity.X *= -1;
-                    float collisionDepth = ball.Position.X + ball.BoundingBox.Width - player2.Position.X;
+                    float collisionDepth = ball.Position.X + ball.BoundingBox.Width - paddlePlayer2.Position.X;
                     ball.Position.X -= collisionDepth * 2;
                 }
 
@@ -191,8 +215,8 @@ namespace Doggo.HumanPong.Components.GameState.States
             scoreBoard.Draw(GameRef.SpriteBatch);
 
             // draw player paddles
-            player1.Draw(GameRef.SpriteBatch);
-            player2.Draw(GameRef.SpriteBatch);
+            paddlePlayer1.Draw(GameRef.SpriteBatch);
+            paddlePlayer2.Draw(GameRef.SpriteBatch);
             GameRef.SpriteBatch.End();
 
             particleEngine.Draw(GameRef.SpriteBatch, GameRef.ScaleMatrix);
@@ -206,15 +230,25 @@ namespace Doggo.HumanPong.Components.GameState.States
             base.Draw(gameTime);
         }
 
-        public void SetUpLocalMultiplayerGame()
+        private void HandlePlayerState(PlayerState state, GameObject paddle, float delta)
         {
-            
+            if (state == PlayerState.UP)
+            {
+                float newPosition = paddle.Position.Y - (delta * paddle.Velocity.Y);
+                paddle.Position.Y = (newPosition < 0 ? 0 : newPosition);
+            }
+            else if (state == PlayerState.DOWN)
+            {
+                float newPosition = paddle.Position.Y + (delta * paddle.Velocity.Y);
+                int maxHeight = Pong.TargetHeight - paddle.BoundingBox.Height;
+                paddle.Position.Y = (newPosition > maxHeight ? maxHeight : newPosition);
+            }
         }
 
         private void ResetPaddles()
         {
-            player1.Position.Y = (Pong.TargetHeight - player1.BoundingBox.Height) / 2f;
-            player2.Position.Y = (Pong.TargetHeight - player2.BoundingBox.Height) / 2f;
+            paddlePlayer1.Position.Y = (Pong.TargetHeight - paddlePlayer1.BoundingBox.Height) / 2f;
+            paddlePlayer2.Position.Y = (Pong.TargetHeight - paddlePlayer2.BoundingBox.Height) / 2f;
         }
         #endregion
     }

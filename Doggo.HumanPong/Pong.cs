@@ -80,7 +80,7 @@ namespace Doggo.HumanPong
             // state manager
             gameStateManager = new GameStateManager(this);
             Components.Add(gameStateManager);
-            playState = new PlayState(this);
+            playState = PlayState.CreateSinglePlayerGame(this);
 
             gameStateManager.ChangeState(playState);
 

@@ -42,12 +42,15 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\Controller\AIPlayer.cs" />
+    <Compile Include="Components\Controller\HumanPlayer.cs" />
     <Compile Include="Components\GameObjects\GameObject.cs" />
     <Compile Include="Components\GameObjects\ScoreBoard.cs" />
     <Compile Include="Components\GameState\GameState.cs" />
     <Compile Include="Components\GameState\GameStateManager.cs" />
     <Compile Include="Components\GameState\States\PlayState.cs" />
     <Compile Include="Components\GameState\States\BaseGameState.cs" />
+    <Compile Include="Components\Controller\BasePlayer.cs" />
     <Compile Include="Components\ParticleEffects\Particle.cs" />
     <Compile Include="Components\ParticleEffects\ParticleEngine.cs" />
     <Compile Include="Components\Utility\Xin.cs" />
