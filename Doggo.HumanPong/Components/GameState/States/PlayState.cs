@@ -101,7 +101,7 @@ namespace Doggo.HumanPong.Components.GameState.States
 
             BallCenterPosition = new Vector2(ballX, ballY);
             Vector2 ballPosition = new Vector2(ballX, ballY);
-            ball = new GameObject(ballTexture, ballPosition, new Vector2(-750, -500));
+            ball = new GameObject(ballTexture, ballPosition, new Vector2(-725, -500));
 
             // Particle Engine
             List<Texture2D> textures = new List<Texture2D>();
@@ -115,7 +115,7 @@ namespace Doggo.HumanPong.Components.GameState.States
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // release the ball to start playing
-            if (!ballMoving && Xin.CheckKeyReleased(Keys.Space)) ballMoving = true;
+            if (!ballMoving && ((player1 is AIPlayer && player2 is AIPlayer) || Xin.CheckKeyReleased(Keys.Space))) ballMoving = true;
 
             // move the left paddle up and down
             HandlePlayerState(player1.GetState(ball, paddlePlayer1), paddlePlayer1, delta);
