@@ -5,7 +5,6 @@ using Doggo.HumanPong.Components.ParticleEffects;
 using Doggo.HumanPong.Components.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Doggo.HumanPong.Components.GameState.States
 {
@@ -37,12 +36,14 @@ namespace Doggo.HumanPong.Components.GameState.States
 
         public static PlayState CreateSinglePlayerGame(Game game)
         {
-            return new PlayState(game, new HumanPlayer(Keys.Z, Keys.S), new AIPlayer());
+            Pong gameRef = (Pong)game;
+            return new PlayState(game, new HumanPlayer(gameRef.Settings.player1Up, gameRef.Settings.player1Down), new AIPlayer());
         }
 
         public static PlayState CreateLocalMultiPlayerGame(Game game)
         {
-            return new PlayState(game, new HumanPlayer(Keys.Z, Keys.S), new HumanPlayer(Keys.Up, Keys.Down));
+            Pong gameRef = (Pong)game;
+            return new PlayState(game, new HumanPlayer(gameRef.Settings.player1Up, gameRef.Settings.player1Down), new HumanPlayer(gameRef.Settings.player2Up, gameRef.Settings.player2Down));
         }
 
         private PlayState(Game game, IPlayer player1, IPlayer player2) : base(game)
@@ -61,17 +62,6 @@ namespace Doggo.HumanPong.Components.GameState.States
 
         protected override void LoadContent()
         {
-            /*
-            // create a solid color texture (without a png file), can be replaced by a premade image file using Content.Load<Texture2D>("contentFolderStructure\fileNameWithoutExtension")
-            int paddleWidth = 5;
-            int paddleHeight = 100;
-
-            Texture2D paddleTexture = new Texture2D(GraphicsDevice, paddleWidth, paddleHeight);
-            Color[] paddleTextureData = new Color[paddleTexture.Width * paddleTexture.Height];
-            for (int i = 0; i < paddleTextureData.Length; ++i)
-                paddleTextureData[i] = Color.Red;
-            paddleTexture.SetData(paddleTextureData);*/
-
             // Background
             background = content.Load<Texture2D>(@"Graphics\Backgrounds\Playfield");
 
@@ -115,7 +105,7 @@ namespace Doggo.HumanPong.Components.GameState.States
             float delta = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             // release the ball to start playing
-            if (!ballMoving && ((player1 is AIPlayer && player2 is AIPlayer) || Xin.CheckKeyReleased(Keys.Space))) ballMoving = true;
+            if (!ballMoving && ((player1 is AIPlayer && player2 is AIPlayer) || Xin.CheckKeyReleased(GameRef.Settings.startRound))) ballMoving = true;
 
             // move the left paddle up and down
             HandlePlayerState(player1.GetState(ball, paddlePlayer1), paddlePlayer1, delta);

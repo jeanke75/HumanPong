@@ -16,9 +16,11 @@ namespace Doggo.HumanPong
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public const int TargetWidth = 1920; //1280
-        public const int TargetHeight = 1080; //720
+        public const int TargetWidth = 1920;
+        public const int TargetHeight = 1080;
         Matrix scaleMatrix;
+
+        UserSettings settings;
 
         GameStateManager gameStateManager;
         PlayState playState;
@@ -37,6 +39,11 @@ namespace Doggo.HumanPong
             get { return scaleMatrix; }
         }
 
+        public UserSettings Settings
+        {
+            get { return settings; }
+        }
+
         public GameStateManager GameStateManager
         {
             get { return gameStateManager; }
@@ -49,14 +56,16 @@ namespace Doggo.HumanPong
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
-            graphics.IsFullScreen = false; 
+            settings = UserSettings.LoadSettings();
+
+            graphics.IsFullScreen = settings.fullscreen; 
             graphics.SynchronizeWithVerticalRetrace = false; //vsync
             //graphics.PreferredBackBufferFormat = SurfaceFormat.Alpha8;
             IsFixedTimeStep = false;
             if (IsFixedTimeStep)
                 TargetElapsedTime = System.TimeSpan.FromMilliseconds(1000.0f / 60);
 
-            SetWindowResolution();
+            SetWindowResolution(settings.width, settings.height);
             IsMouseVisible = true;
         }
         #endregion
@@ -76,11 +85,28 @@ namespace Doggo.HumanPong
             // fps counter
             fpsCounter = new FrameRateCounter(this);
             Components.Add(fpsCounter);
+            fpsCounter.IsVisible = settings.fpsCounter;
 
             // state manager
             gameStateManager = new GameStateManager(this);
             Components.Add(gameStateManager);
-            playState = PlayState.CreateSinglePlayerGame(this);
+
+            // TODO: remove this when the game menu is implemented
+            switch(settings.gameMode)
+            {
+                case GameMode.AI:
+                    playState = PlayState.CreateAIGame(this);
+                    break;
+                case GameMode.Singleplayer:
+                    playState = PlayState.CreateSinglePlayerGame(this);
+                    break;
+                case GameMode.Multiplayer:
+                    playState = PlayState.CreateLocalMultiPlayerGame(this);
+                    break;
+                default:
+                    Exit(); //stop the game if somehow the mode is not one of those
+                    break;
+            }
 
             gameStateManager.ChangeState(playState);
 

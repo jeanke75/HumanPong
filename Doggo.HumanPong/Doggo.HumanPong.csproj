@@ -53,6 +53,7 @@
     <Compile Include="Components\Controller\BasePlayer.cs" />
     <Compile Include="Components\ParticleEffects\Particle.cs" />
     <Compile Include="Components\ParticleEffects\ParticleEngine.cs" />
+    <Compile Include="Components\Utility\UserSettings.cs" />
     <Compile Include="Components\Utility\Xin.cs" />
     <Compile Include="Components\Utility\FrameRateCounter.cs" />
     <Compile Include="Pong.cs" />
